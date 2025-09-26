@@ -11,17 +11,17 @@ on:
 jobs:
   prettier-format-check:
     name: Format Check
-    uses: ./.github/workflows/prettier-format-check.yaml@main
+    uses: SnakeDoc/yodel/.github/workflows/prettier-format-check.yaml@main
 
   markdown-lint-check:
     name: Lint Check
-    uses: ./.github/workflows/markdown-lint-check.yaml@main
+    uses: SnakeDoc/yodel/.github/workflows/markdown-lint-check.yaml@main
 
   gleam-format-check:
     name: Gleam Format Check
-    uses: ./.github/workflows/gleam-format-check.yaml@main
+    uses: SnakeDoc/yodel/.github/workflows/gleam-format-check.yaml@main
 
   gleam-tests:
     name: Gleam Tests
     needs: [prettier-format-check, markdown-lint-check, gleam-format-check]
-    uses: ./.github/workflows/gleam-tests.yaml@main
+    uses: SnakeDoc/yodel/.github/workflows/gleam-tests.yaml@main
