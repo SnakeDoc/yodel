@@ -1,0 +1,78 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+  "name": "windows",
+  "build": {
+    "dockerfile": "../Dockerfile"
+  },
+  "remoteUser": "bymbly",
+  "mounts": [
+    "source=${localWorkspaceFolderBasename}-fish-cache,target=/home/bymbly/.local/share/fish,type=volume"
+  ],
+  "postCreateCommand": "asdf install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmalehorn.vscode-fish",
+        "christian-kohler.path-intellisense",
+        "davidanson.vscode-markdownlint",
+        "donjayamanne.githistory",
+        "editorconfig.editorconfig",
+        "esbenp.prettier-vscode",
+        "foxundermoon.shell-format",
+        "github.codespaces",
+        "github.copilot",
+        "github.copilot-chat",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github",
+        "gleam.gleam",
+        "jakebecker.elixir-ls",
+        "mhutchie.git-graph",
+        "ms-azuretools.vscode-docker",
+        "ms-vsliveshare.vsliveshare",
+        "pgourlain.erlang",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "yzhang.markdown-all-in-one",
+        "zainchen.json"
+      ],
+      "settings": {
+        // editor fonts & ligatures
+        "editor.fontFamily": "'Symbols Nerd Font Mono','Fira Code','Cascadia Code','JetBrains Mono','Droid Sans Mono','monospace',monospace",
+        "editor.fontLigatures": true,
+
+        // terminal fonts
+        "terminal.integrated.fontFamily": "'Symbols Nerd Font Mono','Fira Code','Cascadia Code','JetBrains Mono','monospace'",
+
+        // terminal behavior
+        "terminal.integrated.sendKeybindingsToShell": true,
+
+        // save behavior
+        "files.autoSave": "afterDelay",
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "explicit",
+          "source.fixAll": "explicit"
+        },
+
+        // formatting / whitespace
+        "editor.tabSize": 2,
+        "editor.rulers": [
+          { "column": 100, "color": "#80808022" },
+          { "column": 120, "color": "#80808055" }
+        ],
+        "editor.renderWhitespace": "selection",
+        "editor.formatOnPaste": true,
+        "editor.linkedEditing": true,
+
+        // git / scm
+        "git.confirmSync": true,
+        "git.autofetch": true,
+
+        // copilot
+        "github.copilot.nextEditSuggestions.enabled": true
+      }
+    }
+  }
+}
