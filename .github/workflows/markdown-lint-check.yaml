@@ -1,0 +1,29 @@
+name: Markdown Lint Check
+
+on:
+  workflow_call:
+    inputs:
+      markdownlint-version:
+        required: false
+        type: string
+        default: "latest"
+
+jobs:
+  format:
+    name: Markdown Lint Check
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: latest
+
+      - name: Lint Check
+        run: npx markdownlint-cli2@${{ inputs.markdownlint-version }}

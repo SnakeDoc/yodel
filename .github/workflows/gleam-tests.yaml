@@ -1,0 +1,38 @@
+name: Gleam Tests
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    name: Gleam Tests
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v5
+
+      - name: Setup BEAM Environment
+        uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
+
+      - name: Restore Build Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/gleam
+            build
+          key: ${{ runner.os }}-gleam-${{ hashFiles('**/gleam.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gleam-
+
+      - name: Download Dependencies
+        run: gleam deps download
+
+      - name: Run Tests
+        run: gleam test
