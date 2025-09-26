@@ -1,6 +1,6 @@
 # Yodel
 
-### 🎶 Yo-de-lay-ee-configs!
+### 🎶 Yo-de-lay-ee-configs! <!-- markdownlint-disable-line MD001 MD026 -->
 
 Yodel is a type-safe configuration loader for Gleam that supports JSON, YAML,
 and TOML configs with automatic format detection, environment variable
@@ -12,6 +12,7 @@ resolution, and an intuitive dot-notation API for accessing your config values. 
 ```sh
 gleam add yodel
 ```
+
 ```gleam
 import yodel
 
