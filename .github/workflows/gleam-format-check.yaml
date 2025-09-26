@@ -1,5 +1,5 @@
 name: Gleam
-description: Check Gleam source formatting
+description: Check Gleam Formatting
 
 on:
   workflow_call:

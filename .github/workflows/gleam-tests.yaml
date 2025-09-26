@@ -1,11 +1,12 @@
-name: Gleam Tests
+name: Gleam
+description: Run Gleam Tests
 
 on:
   workflow_call:
 
 jobs:
   test:
-    name: Gleam Tests
+    name: Gleam
     runs-on: ubuntu-latest
 
     permissions:

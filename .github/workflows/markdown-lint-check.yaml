@@ -1,4 +1,5 @@
-name: Markdown Lint Check
+name: Markdown
+description: Check Markdown Lint
 
 on:
   workflow_call:
@@ -10,7 +11,7 @@ on:
 
 jobs:
   format:
-    name: Markdown Lint Check
+    name: Markdown
     runs-on: ubuntu-latest
 
     permissions:
