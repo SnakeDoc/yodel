@@ -18,10 +18,10 @@ jobs:
     uses: SnakeDoc/yodel/.github/workflows/markdown-lint-check.yaml@main
 
   gleam-format-check:
-    name: Gleam Format Check
+    name: Format Check
     uses: SnakeDoc/yodel/.github/workflows/gleam-format-check.yaml@main
 
   gleam-tests:
-    name: Gleam Tests
+    name: Tests
     needs: [prettier-format-check, markdown-lint-check, gleam-format-check]
     uses: SnakeDoc/yodel/.github/workflows/gleam-tests.yaml@main

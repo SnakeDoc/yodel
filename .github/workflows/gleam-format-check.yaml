@@ -1,4 +1,5 @@
-name: Gleam Format Check
+name: Gleam
+description: Check Gleam source formatting
 
 on:
   workflow_call:
@@ -10,7 +11,7 @@ on:
 
 jobs:
   format:
-    name: Gleam Format Check
+    name: Gleam
     runs-on: ubuntu-latest
 
     permissions:
