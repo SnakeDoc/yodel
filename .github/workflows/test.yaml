@@ -35,7 +35,7 @@ jobs:
 
   test:
     name: Test
-    needs: [ lint ]
+    needs: [lint]
     runs-on: ubuntu-latest
 
     permissions:

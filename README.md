@@ -12,6 +12,7 @@ resolution, and an intuitive dot-notation API for accessing your config values. 
 ```sh
 gleam add yodel
 ```
+
 ```gleam
 import yodel
 
