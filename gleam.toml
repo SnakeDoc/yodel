@@ -14,4 +14,4 @@ tom = ">= 0.3.0 and < 3.0.0"
 gleam_regexp = ">= 1.0.0 and < 2.0.0"
 
 [dev-dependencies]
-startest = "== 0.6.0"
+startest = "== 0.7.0"
