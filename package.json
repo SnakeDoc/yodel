@@ -1,0 +1,18 @@
+{
+  "name": "yodel-npm-tooling",
+  "version": "1.0.0",
+  "description": "Dev tooling for yodel",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "npm run lint:md",
+    "lint:md": "markdownlint-cli2 --fix",
+    "lint:check": "npm run lint:check:md",
+    "lint:check:md": "markdownlint-cli2"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "0.18.1",
+    "prettier": "3.6.2"
+  }
+}
