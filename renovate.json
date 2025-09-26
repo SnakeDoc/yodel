@@ -1,25 +1,39 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:best-practices"
-  ],
-  "automergeType": "branch",
+  "description": "yodel's renovate config",
+  "extends": ["config:best-practices"],
   "rangeStrategy": "widen",
+  "automergeType": "branch",
+  "semanticCommits": "enabled",
+  "commitBodyTable": true,
+  "assignees": ["SnakeDoc"],
+
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true
   },
+
   "packageRules": [
     {
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "pinDigest",
-        "digest"
-      ],
+      "description": "Automerge non-major updates",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
+    },
+    {
+      "description": "Automerge pin updates",
+      "matchUpdateTypes": ["pin", "pinDigest"],
+      "automerge": true
+    },
+    {
+      "description": "One week stability period for npm packages",
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "One week stability period for hex (Erlang/Elixir/Gleam) packages",
+      "matchDatasources": ["hex"],
+      "minimumReleaseAge": "7 days"
     }
   ]
 }
