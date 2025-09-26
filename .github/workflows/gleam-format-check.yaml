@@ -1,0 +1,30 @@
+name: Gleam Format Check
+
+on:
+  workflow_call:
+    inputs:
+      check-path:
+        required: false
+        type: string
+        default: "."
+
+jobs:
+  format:
+    name: Gleam Format Check
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v5
+
+      - name: Setup BEAM Environment
+        uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
+
+      - name: Check Source Formatting
+        run: gleam format --check ${{ inputs.check-path }}
