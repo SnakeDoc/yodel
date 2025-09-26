@@ -3,7 +3,7 @@
   "description": "yodel's renovate config",
   "extends": ["config:best-practices"],
   "rangeStrategy": "widen",
-  "automergeType": "branch",
+  "automergeType": "pr",
   "semanticCommits": "enabled",
   "commitBodyTable": true,
   "assignees": ["SnakeDoc"],
