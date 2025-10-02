@@ -543,7 +543,7 @@ fn parse(
   next: fn(Properties) -> Result(Context, ConfigError),
 ) -> Result(Context, ConfigError) {
   parser.parse(input, format)
-  |> result.then(next)
+  |> result.try(next)
 }
 
 fn validate(
@@ -551,7 +551,7 @@ fn validate(
   handler: fn(Properties) -> Result(Context, ConfigError),
 ) -> Result(Context, ConfigError) {
   validator.validate_properties(props)
-  |> result.then(handler)
+  |> result.try(handler)
 }
 
 fn resolve(
@@ -563,7 +563,7 @@ fn resolve(
     True -> resolver.resolve_placeholders(input, options)
     False -> input |> Ok
   }
-  |> result.then(handler)
+  |> result.try(handler)
 }
 
 fn read(
@@ -574,7 +574,7 @@ fn read(
     Ok(content) -> Ok(content)
     Error(e) -> Error(e)
   }
-  |> result.then(handler)
+  |> result.try(handler)
 }
 
 fn select(
@@ -594,5 +594,5 @@ fn select(
     options.Auto -> auto_format
   }
   |> Ok
-  |> result.then(handler)
+  |> result.try(handler)
 }
