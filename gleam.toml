@@ -1,5 +1,5 @@
 name = "yodel"
-version = "1.0.1"
+version = "1.0.2"
 
 description = "A type-safe configuration loader for Gleam that handles JSON, YAML, and TOML with environment variable resolution."
 licences = ["Apache-2.0"]
