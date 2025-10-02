@@ -2,10 +2,12 @@ import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
 import gleam/string
+import gleam/time/calendar
+import gleam/time/duration
+import gleam/time/timestamp
 import tom.{
-  type Date, type DateTime, type Offset, type ParseError, type Time, type Toml,
-  Array, ArrayOfTables, Bool, Date, DateTime, Float, Infinity, InlineTable, Int,
-  Local, Nan, Negative, Offset, Positive, String, Table, Time,
+  type ParseError, type Toml, Array, ArrayOfTables, Bool, Date, DateTime, Float,
+  Infinity, InlineTable, Int, Local, Nan, Offset, String, Table, Time,
 }
 import yodel/errors.{
   type ConfigError, InvalidStructure, InvalidSyntax, Location, ParseError,
@@ -72,7 +74,8 @@ fn parse_value(value: Toml, path: Path) -> Properties {
 
     Date(value) -> properties.string(path, date_to_string(value))
     Time(value) -> properties.string(path, time_to_string(value))
-    DateTime(value) -> properties.string(path, date_time_to_string(value))
+    DateTime(date, time, offset) ->
+      properties.string(path, date_time_to_string(date, time, offset))
 
     Array(array) -> parse_array(array, path)
     ArrayOfTables(tables) -> parse_array_of_tables(tables, path)
@@ -81,42 +84,34 @@ fn parse_value(value: Toml, path: Path) -> Properties {
   }
 }
 
-fn date_time_to_string(datetime: DateTime) -> String {
-  let date = date_to_string(datetime.date)
-  let time = time_to_string(datetime.time)
-  let offset = offset_to_string(datetime.offset)
-  date <> "T" <> time <> offset
+fn date_time_to_string(
+  date: calendar.Date,
+  time: calendar.TimeOfDay,
+  offset: tom.Offset,
+) -> String {
+  let offset = case offset {
+    Local -> duration.hours(0)
+    Offset(duration) -> duration
+  }
+  timestamp.from_calendar(date, time, offset) |> timestamp.to_rfc3339(offset)
 }
 
-fn date_to_string(date: Date) -> String {
+fn date_to_string(date: calendar.Date) -> String {
   int.to_string(date.year)
   <> "-"
-  <> int.to_string(date.month)
+  <> calendar.month_to_int(date.month) |> int.to_string
   <> "-"
   <> int.to_string(date.day)
 }
 
-fn time_to_string(time: Time) -> String {
-  int.to_string(time.hour)
+fn time_to_string(time: calendar.TimeOfDay) -> String {
+  int.to_string(time.hours)
   <> ":"
-  <> int.to_string(time.minute)
+  <> int.to_string(time.minutes)
   <> ":"
-  <> int.to_string(time.second)
+  <> int.to_string(time.seconds)
   <> ":"
-  <> int.to_string(time.millisecond)
-}
-
-fn offset_to_string(offset: Offset) -> String {
-  case offset {
-    Local -> ""
-    Offset(direction, hours, minutes) -> {
-      let sign = case direction {
-        Positive -> "+"
-        Negative -> "-"
-      }
-      sign <> int.to_string(hours) <> ":" <> int.to_string(minutes)
-    }
-  }
+  <> int.to_string(time.nanoseconds)
 }
 
 fn parse_array(array: List(Toml), path: Path) -> Properties {
