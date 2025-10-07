@@ -508,42 +508,6 @@ pub fn with_resolve_lenient(options options: Options) -> Options {
   with_resolve_mode(options, resolve_lenient)
 }
 
-/// Get the format of the configuration file.
-///
-/// Example:
-///
-/// ```gleam
-/// let format = yodel.get_format(options)
-/// ```
-pub fn get_format(options options: Options) -> Format {
-  options.get_format(options)
-}
-
-/// Check if placeholder resolution is enabled.
-///
-/// Example:
-///
-/// ```gleam
-/// case yodel.is_resolve_enabled(options) {
-///   True -> "Resolution is enabled"
-///   False -> "Resolution is disabled"
-/// }
-/// ```
-pub fn is_resolve_enabled(options options: Options) -> Bool {
-  options.is_resolve_enabled(options)
-}
-
-/// Get the resolve mode.
-///
-/// Example:
-///
-/// ```gleam
-/// let mode = yodel.get_resolve_mode(options)
-/// ```
-pub fn get_resolve_mode(options options: Options) -> ResolveMode {
-  options.get_resolve_mode(options)
-}
-
 fn parse(
   input: String,
   format: Format,
