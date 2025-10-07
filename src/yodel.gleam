@@ -77,14 +77,14 @@ pub type ResolveMode =
   options.ResolveMode
 
 /// Strict Resolve Mode - Fail if any placeholder is unresolved.
-pub const strict_resolve = options.Strict
+pub const resolve_strict = options.Strict
 
 /// Lenient Resolve Mode - Preserve unresolved placeholders.
 ///
 /// This means `${foo}` will remain as `${foo}` if `foo` is not defined.
 ///
 /// **This is the default.**
-pub const lenient_resolve = options.Lenient
+pub const resolve_lenient = options.Lenient
 
 /// The format of the configuration file. Defaults to `Auto`.
 pub type Format =
@@ -101,16 +101,16 @@ pub type Format =
 /// If this happens, try specifying the format using `as_json`, `as_toml`, `as_yaml`, or `with_format`.
 ///
 /// **This is the default.**
-pub const auto_format = options.Auto
+pub const format_auto = options.Auto
 
 /// Parse the configuration file as JSON.
-pub const json_format = options.Json
+pub const format_json = options.Json
 
 /// Parse the configuration file as TOML.
-pub const toml_format = options.Toml
+pub const format_toml = options.Toml
 
 /// Parse the configuration file as YAML.
-pub const yaml_format = options.Yaml
+pub const format_yaml = options.Yaml
 
 /// Load a configuration file.
 ///
@@ -367,7 +367,7 @@ pub fn with_format(options options: Options, format format: Format) -> Options {
 ///   |> yodel.load_with_options(my_config)
 /// ```
 pub fn as_json(options options: Options) -> Options {
-  with_format(options, json_format)
+  with_format(options, format_json)
 }
 
 /// Set the format of the configuration file to TOML.
@@ -381,7 +381,7 @@ pub fn as_json(options options: Options) -> Options {
 ///   |> yodel.load_with_options(my_config)
 /// ```
 pub fn as_toml(options options: Options) -> Options {
-  with_format(options, toml_format)
+  with_format(options, format_toml)
 }
 
 /// Set the format of the configuration file to YAML.
@@ -395,7 +395,7 @@ pub fn as_toml(options options: Options) -> Options {
 ///   |> yodel.load_with_options(my_config)
 /// ```
 pub fn as_yaml(options options: Options) -> Options {
-  with_format(options, yaml_format)
+  with_format(options, format_yaml)
 }
 
 /// Attempt to automatically detect the format of the configuration file.
@@ -413,11 +413,11 @@ pub fn as_yaml(options options: Options) -> Options {
 /// ```gleam
 /// let ctx =
 ///   yodel.default_options()
-///   |> yodel.auto_detect_format()
+///   |> yodel.as_auto()
 ///   |> yodel.load_with_options(my_config)
 /// ```
-pub fn auto_detect_format(options options: Options) -> Options {
-  with_format(options, auto_format)
+pub fn as_auto(options options: Options) -> Options {
+  with_format(options, format_auto)
 }
 
 /// Enable or disable placeholder resolution.
@@ -444,10 +444,10 @@ pub fn with_resolve_enabled(
 /// ```gleam
 /// let ctx =
 ///   yodel.default_options()
-///   |> yodel.enable_resolve()
-/// |> yodel.load_with_options("config.yaml")
+///   |> yodel.resolve_enabled()
+///   |> yodel.load_with_options("config.yaml")
 /// ```
-pub fn enable_resolve(options options: Options) -> Options {
+pub fn resolve_enabled(options options: Options) -> Options {
   with_resolve_enabled(options, True)
 }
 
@@ -458,10 +458,10 @@ pub fn enable_resolve(options options: Options) -> Options {
 /// ```gleam
 /// let ctx =
 ///   yodel.default_options()
-///   |> yodel.disable_resolve()
+///   |> yodel.resolve_disabled()
 ///   |> yodel.load_with_options("config.yaml")
 /// ```
-pub fn disable_resolve(options options: Options) -> Options {
+pub fn resolve_disabled(options options: Options) -> Options {
   with_resolve_enabled(options, False)
 }
 
@@ -488,11 +488,11 @@ pub fn with_resolve_mode(
 /// ```gleam
 /// let ctx =
 ///   yodel.default_options()
-///   |> yodel.with_strict_resolve()
+///   |> yodel.with_resolve_strict()
 ///   |> yodel.load_with_options(my_config)
 /// ```
-pub fn with_strict_resolve(options options: Options) -> Options {
-  with_resolve_mode(options, strict_resolve)
+pub fn with_resolve_strict(options options: Options) -> Options {
+  with_resolve_mode(options, resolve_strict)
 }
 
 /// Set the resolve mode to lenient.
@@ -502,10 +502,10 @@ pub fn with_strict_resolve(options options: Options) -> Options {
 /// ```gleam
 /// let ctx =
 ///   yodel.default_options()
-///   |> yodel.with_lenient_resolve()
+///   |> yodel.with_resolve_lenient()
 ///   |> yodel.load_with_options(my_config)
-pub fn with_lenient_resolve(options options: Options) -> Options {
-  with_resolve_mode(options, lenient_resolve)
+pub fn with_resolve_lenient(options options: Options) -> Options {
+  with_resolve_mode(options, resolve_lenient)
 }
 
 /// Get the format of the configuration file.
@@ -595,10 +595,10 @@ fn select(
     FormatDetector("json/yaml", yaml.detect),
   ]
   case format.get_format(input, content, options, formats) {
-    options.Json -> json_format
-    options.Toml -> toml_format
-    options.Yaml -> yaml_format
-    options.Auto -> auto_format
+    options.Json -> format_json
+    options.Toml -> format_toml
+    options.Yaml -> format_yaml
+    options.Auto -> format_auto
   }
   |> Ok
   |> result.try(handler)
