@@ -1,8 +1,8 @@
 import yodel/errors.{type ConfigError, ParseError, UnknownFormat}
-import yodel/options.{type Format, Auto, Json, Toml, Yaml}
-import yodel/parsers/toml
-import yodel/parsers/yaml
-import yodel/properties.{type Properties}
+import yodel/internal/options.{type Format, Auto, Json, Toml, Yaml}
+import yodel/internal/parsers/toml
+import yodel/internal/parsers/yaml
+import yodel/internal/properties.{type Properties}
 
 pub type Parser {
   Parser(name: String, parse: ParseFunction)

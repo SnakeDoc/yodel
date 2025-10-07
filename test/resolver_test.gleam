@@ -5,7 +5,7 @@ import startest/expect
 import test_helpers.{with_env}
 import yodel
 import yodel/errors.{ResolverError, UnresolvedPlaceholder}
-import yodel/resolver
+import yodel/internal/resolver
 
 pub fn resolver_tests() {
   describe("resolver", [

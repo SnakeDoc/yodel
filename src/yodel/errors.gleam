@@ -1,4 +1,17 @@
 import gleam/int
+import yodel/value.{type Value}
+
+pub type PropertiesError {
+  PathNotFound(path: String)
+  TypeError(path: String, error: TypeError)
+}
+
+pub type TypeError {
+  ExpectedString(got: Value)
+  ExpectedInt(got: Value)
+  ExpectedFloat(got: Value)
+  ExpectedBool(got: Value)
+}
 
 pub type ConfigError {
   FileError(FileError)

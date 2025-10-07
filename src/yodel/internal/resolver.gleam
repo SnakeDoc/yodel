@@ -8,7 +8,7 @@ import gleam/string
 import yodel/errors.{
   type ConfigError, RegexError, ResolverError, UnresolvedPlaceholder,
 }
-import yodel/options.{type Options, type ResolveMode, Lenient, Strict}
+import yodel/internal/options.{type Options, type ResolveMode, Lenient, Strict}
 
 const placeholder_pattern = "\\$\\{([^:}]+)(?::((?:[^${}]+|\\$\\{(?:[^{}]*\\{[^{}]*\\})*[^{}]*\\})*))?\\}"
 

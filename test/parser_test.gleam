@@ -2,10 +2,11 @@ import gleam/float
 import gleam/list
 import startest.{describe, it}
 import startest/expect
-import yodel/parser.{type ParseFunction}
-import yodel/parsers/toml
-import yodel/parsers/yaml
-import yodel/properties.{BoolValue, FloatValue, IntValue, StringValue}
+import yodel/internal/parser.{type ParseFunction}
+import yodel/internal/parsers/toml
+import yodel/internal/parsers/yaml
+import yodel/internal/properties
+import yodel/value.{BoolValue, FloatValue, IntValue, StringValue}
 
 type TestCase {
   TestCase(

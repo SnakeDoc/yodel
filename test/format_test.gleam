@@ -2,9 +2,9 @@ import gleam/list
 import startest.{describe, it}
 import startest/expect
 import yodel.{type Format}
-import yodel/input.{type Input, Content, File}
-import yodel/parsers/toml
-import yodel/parsers/yaml
+import yodel/internal/input.{type Input, Content, File}
+import yodel/internal/parsers/toml
+import yodel/internal/parsers/yaml
 
 type TestCase {
   TestCase(

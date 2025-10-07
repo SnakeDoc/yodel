@@ -44,17 +44,17 @@
 //// - Optional return default values if the key is not found.
 
 import gleam/result
-import yodel/context
-import yodel/errors.{type ConfigError}
-import yodel/format.{FormatDetector}
-import yodel/input
-import yodel/options.{type Options}
-import yodel/parser
-import yodel/parsers/toml
-import yodel/parsers/yaml
-import yodel/properties.{type Properties, type PropertiesError}
-import yodel/resolver
-import yodel/validator
+import yodel/errors.{type ConfigError, type PropertiesError}
+import yodel/internal/context
+import yodel/internal/format.{FormatDetector}
+import yodel/internal/input
+import yodel/internal/options
+import yodel/internal/parser
+import yodel/internal/parsers/toml
+import yodel/internal/parsers/yaml
+import yodel/internal/properties.{type Properties}
+import yodel/internal/resolver
+import yodel/internal/validator
 
 /// The Context type, representing a configuration context.
 /// This is the main type used to hold configuration values.
@@ -62,6 +62,13 @@ import yodel/validator
 /// Use the provided functions to access the configuration values.
 pub type Context =
   context.Context
+
+/// The Options type, representing configurable options for Yodel.
+/// This is used to customize the behavior of the configuration loader.
+/// It is opaque, meaning you cannot access the options directly.
+/// Use the provided functions to create and modify options.
+pub type Options =
+  options.Options
 
 /// The Resolve Mode to use, either `resolve_strict` or `resolve_lenient`.
 /// `resolve_strict` will fail if any placeholder is unresolved.

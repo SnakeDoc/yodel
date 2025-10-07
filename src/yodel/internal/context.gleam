@@ -2,10 +2,12 @@ import gleam/float
 import gleam/int
 import gleam/result
 import gleam/string
-import yodel/properties.{
-  type Properties, type PropertiesError, BoolValue, ExpectedBool, ExpectedFloat,
-  ExpectedInt, ExpectedString, FloatValue, IntValue, StringValue, TypeError,
+import yodel/errors.{
+  type PropertiesError, ExpectedBool, ExpectedFloat, ExpectedInt, ExpectedString,
+  TypeError,
 }
+import yodel/internal/properties.{type Properties}
+import yodel/value.{BoolValue, FloatValue, IntValue, StringValue}
 
 pub opaque type Context {
   Context(properties: Properties)
