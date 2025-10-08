@@ -1,16 +1,34 @@
+//// Configuration options for loading and parsing config files.
+////
+//// **Note:** These types are re-exported from the main `yodel` module.
+//// Use the builder functions in `yodel` to construct options rather than
+//// importing this module directly.
+
+/// Configuration options for loading config files.
+///
+/// Create options using `yodel.default_options()` and configure using
+/// builder functions like `yodel.with_format()` and `yodel.with_resolve_mode()`.
 pub opaque type Options {
   Options(format: Format, resolve: ResolveOptions)
 }
 
+/// The format of the configuration file.
 pub type Format {
+  /// Automatically detect format
   Auto
+  /// Parse as JSON
   Json
+  /// Parse as TOML
   Toml
+  /// Parse as YAML
   Yaml
 }
 
+/// The resolve mode for environment variable placeholders.
 pub type ResolveMode {
+  /// Fail if any placeholder cannot be resolved
   Strict
+  /// Preserve unresolved placeholders in the output
   Lenient
 }
 

@@ -6,7 +6,7 @@
 //// ```gleam
 //// import yodel
 ////
-//// let ctx = yodel.load("config.toml")
+//// let assert Ok(ctx) = yodel.load("config.toml")
 //// yodel.get_string(ctx, "foo.bar") // "fooey"
 //// ```
 ////
@@ -57,54 +57,93 @@ import yodel/internal/validator
 import yodel/options
 import yodel/value
 
-/// The Context type, representing a configuration context.
-/// This is the main type used to hold configuration values.
-/// It is opaque, meaning you cannot access the properties directly.
-/// Use the provided functions to access the configuration values.
+/// The Context type, representing a loaded configuration.
+///
+/// This is an opaque type that holds your parsed configuration values.
+/// Create a context using `load()` or `load_with_options()`, then access
+/// values using the getter functions like `get_string()`, `get_int()`, etc.
+///
+/// ```gleam
+/// let assert Ok(ctx) = yodel.load("config.yaml")
+/// let value = yodel.get_string(ctx, "database.host")
+/// ```
 pub type Context =
   context.Context
 
-/// The Options type, representing configurable options for Yodel.
-/// This is used to customize the behavior of the configuration loader.
-/// It is opaque, meaning you cannot access the options directly.
-/// Use the provided functions to create and modify options.
+/// Configuration options for loading config files.
+///
+/// Create using `default_options()` and configure using builder functions:
+///
+/// ```gleam
+/// let ctx =
+///   yodel.default_options()
+///   |> yodel.as_yaml()
+///   |> yodel.with_resolve_strict()
+///   |> yodel.load_with_options("config.yaml")
+/// ```
 pub type Options =
   options.Options
 
-/// The format of the configuration file. Defaults to `Auto`.
+/// The format of a configuration file.
+///
+/// Use the constants `format_auto` **(default)**, `format_json`, `format_toml`, or `format_yaml`,
+/// or pass this type to `with_format()`.
 pub type Format =
   options.Format
 
-/// The Resolve Mode to use, either `resolve_strict` or `resolve_lenient`.
-/// `resolve_strict` will fail if any placeholder is unresolved.
-/// `resolve_lenient`, the default, will preserve unresolved placeholders.
+/// The resolve mode for environment variable placeholders.
+///
+/// Use the constants `resolve_strict` or `resolve_lenient`, or pass this type
+/// to `with_resolve_mode()`.
+///
+/// - `resolve_strict`: Fail if any placeholder cannot be resolved
+/// - `resolve_lenient`: Preserve unresolved placeholders as-is **(default)**
 pub type ResolveMode =
   options.ResolveMode
 
+/// Errors that can occur when loading or parsing configuration.
 pub type ConfigError =
   errors.ConfigError
 
+/// Errors that occur when reading configuration files from disk.
 pub type FileError =
   errors.FileError
 
+/// Errors that occur when parsing configuration content.
 pub type ParseError =
   errors.ParseError
 
+/// Syntax errors with location information.
 pub type SyntaxError =
   errors.SyntaxError
 
+/// Location of a syntax error in the source file.
+pub type Location =
+  errors.Location
+
+/// Errors that occur when resolving environment variable placeholders.
 pub type ResolverError =
   errors.ResolverError
 
+/// Errors that occur during configuration validation.
 pub type ValidationError =
   errors.ValidationError
 
+/// Errors that occur when accessing configuration values.
 pub type PropertiesError =
   errors.PropertiesError
 
+/// Type mismatch errors when accessing configuration values.
+///
+/// The `got` field contains the actual value that was found, which can be
+/// helpful for debugging configuration issues.
 pub type TypeError =
   errors.TypeError
 
+/// Represents a value stored in the configuration.
+///
+/// This type appears in `TypeError` when a type mismatch occurs, allowing
+/// you to see what value was actually present in the configuration.
 pub type Value =
   value.Value
 
@@ -147,13 +186,14 @@ pub const resolve_lenient = options.Lenient
 ///
 /// `input` can be a file path or a string containing the configuration content.
 ///
-/// Example:
+/// Example with file path:
 ///
 /// ```gleam
-/// let ctx = yodel.load("config.toml")
+/// let assert Ok(ctx) = yodel.load("config.toml")
+/// ```
 ///
 /// let content = "foo: bar" // yaml content
-/// let ctx = yodel.load(content)
+/// let assert Ok(ctx) = yodel.load(content)
 /// ```
 pub fn load(from input: String) -> Result(Context, ConfigError) {
   load_with_options(default_options(), input)
@@ -355,14 +395,14 @@ pub fn parse_bool(ctx: Context, key: String) -> Result(Bool, PropertiesError) {
 ///
 /// Default Options:
 ///
-/// - Format: `auto_format`
+/// - Format: `format_auto`
 /// - Resolve Enabled: `True`
-/// - Resolve Mode: `lenient_resolve`
+/// - Resolve Mode: `resolve_lenient`
 ///
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.load_with_options("config.toml")
 /// ```
@@ -375,9 +415,9 @@ pub fn default_options() -> Options {
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
-///   |> yodel.with_format(yodel.json_format)
+///   |> yodel.with_format(yodel.format_json)
 ///   |> yodel.load_with_options("config.json")
 /// ```
 pub fn with_format(options options: Options, format format: Format) -> Options {
@@ -389,7 +429,7 @@ pub fn with_format(options options: Options, format format: Format) -> Options {
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.as_json()
 ///   |> yodel.load_with_options(my_config)
@@ -403,7 +443,7 @@ pub fn as_json(options options: Options) -> Options {
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.as_toml()
 ///   |> yodel.load_with_options(my_config)
@@ -417,7 +457,7 @@ pub fn as_toml(options options: Options) -> Options {
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.as_yaml()
 ///   |> yodel.load_with_options(my_config)
@@ -439,7 +479,7 @@ pub fn as_yaml(options options: Options) -> Options {
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.as_auto()
 ///   |> yodel.load_with_options(my_config)
@@ -453,7 +493,7 @@ pub fn as_auto(options options: Options) -> Options {
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.with_resolve_enabled(False)
 ///   |> yodel.load_with_options("config.yaml")
@@ -470,7 +510,7 @@ pub fn with_resolve_enabled(
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.resolve_enabled()
 ///   |> yodel.load_with_options("config.yaml")
@@ -484,7 +524,7 @@ pub fn resolve_enabled(options options: Options) -> Options {
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.resolve_disabled()
 ///   |> yodel.load_with_options("config.yaml")
@@ -498,9 +538,9 @@ pub fn resolve_disabled(options options: Options) -> Options {
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
-///   |> yodel.with_resolve_mode(yodel.strict_resolve)
+///   |> yodel.with_resolve_mode(yodel.resolve_strict)
 ///   |> yodel.load_with_options("config.json")
 /// ```
 pub fn with_resolve_mode(
@@ -514,7 +554,7 @@ pub fn with_resolve_mode(
 ///
 /// Example:
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.with_resolve_strict()
 ///   |> yodel.load_with_options(my_config)
@@ -528,7 +568,7 @@ pub fn with_resolve_strict(options options: Options) -> Options {
 /// Example:
 ///
 /// ```gleam
-/// let ctx =
+/// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.with_resolve_lenient()
 ///   |> yodel.load_with_options(my_config)
