@@ -192,8 +192,17 @@ pub const resolve_lenient = options.Lenient
 /// let assert Ok(ctx) = yodel.load("config.toml")
 /// ```
 ///
-/// let content = "foo: bar" // yaml content
-/// let assert Ok(ctx) = yodel.load(content)
+/// Example with string content:
+///
+/// ```gleam
+/// let yaml_content = "database:\n  host: localhost"
+/// case yodel.load(yaml_content) {
+///   Ok(ctx) -> ctx
+///   Error(e) -> {
+///     // Handle error appropriately
+///     panic as yodel.format_config_error(e)
+///   }
+/// }
 /// ```
 pub fn load(from input: String) -> Result(Context, ConfigError) {
   load_with_options(default_options(), input)
