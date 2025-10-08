@@ -1,6 +1,6 @@
 import gleam/list
 import yodel/internal/input.{type Input}
-import yodel/internal/options.{type Format, type Options, Auto}
+import yodel/options.{type Format, type Options, Auto}
 
 pub type FormatDetector {
   FormatDetector(name: String, detect: DetectFunction)

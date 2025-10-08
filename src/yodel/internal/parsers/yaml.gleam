@@ -10,9 +10,9 @@ import yodel/errors.{
   SyntaxError,
 }
 import yodel/internal/input.{type Input, Content, File}
-import yodel/internal/options.{type Format, Auto, Json, Yaml}
 import yodel/internal/path.{type Path}
 import yodel/internal/properties.{type Properties}
+import yodel/options.{type Format, Auto, Json, Yaml}
 
 const known_extensions = [
   #("json", ["json", "jsn", "json5", "jsonc"]),

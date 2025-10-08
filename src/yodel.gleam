@@ -44,17 +44,18 @@
 //// - Optional return default values if the key is not found.
 
 import gleam/result
-import yodel/errors.{type ConfigError, type PropertiesError}
+import yodel/errors
 import yodel/internal/context
 import yodel/internal/format.{FormatDetector}
 import yodel/internal/input
-import yodel/internal/options
 import yodel/internal/parser
 import yodel/internal/parsers/toml
 import yodel/internal/parsers/yaml
 import yodel/internal/properties.{type Properties}
 import yodel/internal/resolver
 import yodel/internal/validator
+import yodel/options
+import yodel/value
 
 /// The Context type, representing a configuration context.
 /// This is the main type used to hold configuration values.
@@ -70,25 +71,42 @@ pub type Context =
 pub type Options =
   options.Options
 
+/// The format of the configuration file. Defaults to `Auto`.
+pub type Format =
+  options.Format
+
 /// The Resolve Mode to use, either `resolve_strict` or `resolve_lenient`.
 /// `resolve_strict` will fail if any placeholder is unresolved.
 /// `resolve_lenient`, the default, will preserve unresolved placeholders.
 pub type ResolveMode =
   options.ResolveMode
 
-/// Strict Resolve Mode - Fail if any placeholder is unresolved.
-pub const resolve_strict = options.Strict
+pub type ConfigError =
+  errors.ConfigError
 
-/// Lenient Resolve Mode - Preserve unresolved placeholders.
-///
-/// This means `${foo}` will remain as `${foo}` if `foo` is not defined.
-///
-/// **This is the default.**
-pub const resolve_lenient = options.Lenient
+pub type FileError =
+  errors.FileError
 
-/// The format of the configuration file. Defaults to `Auto`.
-pub type Format =
-  options.Format
+pub type ParseError =
+  errors.ParseError
+
+pub type SyntaxError =
+  errors.SyntaxError
+
+pub type ResolverError =
+  errors.ResolverError
+
+pub type ValidationError =
+  errors.ValidationError
+
+pub type PropertiesError =
+  errors.PropertiesError
+
+pub type TypeError =
+  errors.TypeError
+
+pub type Value =
+  value.Value
 
 /// Attempt to automatically detect the format of the configuration file.
 ///
@@ -111,6 +129,16 @@ pub const format_toml = options.Toml
 
 /// Parse the configuration file as YAML.
 pub const format_yaml = options.Yaml
+
+/// Strict Resolve Mode - Fail if any placeholder is unresolved.
+pub const resolve_strict = options.Strict
+
+/// Lenient Resolve Mode - Preserve unresolved placeholders.
+///
+/// This means `${foo}` will remain as `${foo}` if `foo` is not defined.
+///
+/// **This is the default.**
+pub const resolve_lenient = options.Lenient
 
 /// Load a configuration file.
 ///
