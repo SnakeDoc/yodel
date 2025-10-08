@@ -576,6 +576,11 @@ pub fn with_resolve_lenient(options options: Options) -> Options {
   with_resolve_mode(options, resolve_lenient)
 }
 
+/// Format a `ConfigError` into a human-readable string.
+pub fn describe_config_error(error: ConfigError) -> String {
+  errors.format_config_error(error)
+}
+
 fn parse(
   input: String,
   format: Format,
