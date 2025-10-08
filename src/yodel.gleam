@@ -432,7 +432,7 @@ pub fn with_format(options options: Options, format format: Format) -> Options {
 /// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.as_json()
-///   |> yodel.load_with_options(my_config)
+///   |> yodel.load_with_options(config_content)
 /// ```
 pub fn as_json(options options: Options) -> Options {
   with_format(options, format_json)
@@ -446,7 +446,7 @@ pub fn as_json(options options: Options) -> Options {
 /// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.as_toml()
-///   |> yodel.load_with_options(my_config)
+///   |> yodel.load_with_options("config.toml")
 /// ```
 pub fn as_toml(options options: Options) -> Options {
   with_format(options, format_toml)
@@ -460,7 +460,7 @@ pub fn as_toml(options options: Options) -> Options {
 /// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.as_yaml()
-///   |> yodel.load_with_options(my_config)
+///   |> yodel.load_with_options("config.json")
 /// ```
 pub fn as_yaml(options options: Options) -> Options {
   with_format(options, format_yaml)
@@ -482,7 +482,7 @@ pub fn as_yaml(options options: Options) -> Options {
 /// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.as_auto()
-///   |> yodel.load_with_options(my_config)
+///   |> yodel.load_with_options("config.yaml")
 /// ```
 pub fn as_auto(options options: Options) -> Options {
   with_format(options, format_auto)
@@ -557,7 +557,7 @@ pub fn with_resolve_mode(
 /// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.with_resolve_strict()
-///   |> yodel.load_with_options(my_config)
+///   |> yodel.load_with_options(config_content)
 /// ```
 pub fn with_resolve_strict(options options: Options) -> Options {
   with_resolve_mode(options, resolve_strict)
@@ -571,7 +571,7 @@ pub fn with_resolve_strict(options options: Options) -> Options {
 /// let assert Ok(ctx) =
 ///   yodel.default_options()
 ///   |> yodel.with_resolve_lenient()
-///   |> yodel.load_with_options(my_config)
+///   |> yodel.load_with_options(config_content)
 pub fn with_resolve_lenient(options options: Options) -> Options {
   with_resolve_mode(options, resolve_lenient)
 }
