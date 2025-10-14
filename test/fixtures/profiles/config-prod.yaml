@@ -1,0 +1,9 @@
+database:
+  host: prod.db.example.com
+  port: 5432
+
+feature_flags:
+  api_v2: true
+
+security:
+  strict: true

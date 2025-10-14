@@ -1,6 +1,10 @@
 import gleam/dict.{type Dict}
 import gleam/result
-import yodel/path
+import yodel/errors.{type PropertiesError, PathNotFound}
+import yodel/internal/path
+import yodel/value.{
+  type Value, BoolValue, FloatValue, IntValue, NullValue, StringValue,
+}
 
 pub opaque type Properties {
   Properties(entries: Dict(Path, Value))
@@ -8,26 +12,6 @@ pub opaque type Properties {
 
 pub type Path =
   String
-
-pub type Value {
-  StringValue(String)
-  IntValue(Int)
-  FloatValue(Float)
-  BoolValue(Bool)
-  NullValue
-}
-
-pub type PropertiesError {
-  PathNotFound(path: String)
-  TypeError(path: String, error: TypeError)
-}
-
-pub type TypeError {
-  ExpectedString(got: Value)
-  ExpectedInt(got: Value)
-  ExpectedFloat(got: Value)
-  ExpectedBool(got: Value)
-}
 
 pub fn new() -> Properties {
   Properties(entries: dict.new())

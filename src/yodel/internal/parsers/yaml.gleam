@@ -9,24 +9,26 @@ import yodel/errors.{
   type ConfigError, InvalidStructure, InvalidSyntax, Location, ParseError,
   SyntaxError,
 }
-import yodel/input.{type Input, Content, File}
+import yodel/internal/input.{type Input, Content, Directory, File}
+import yodel/internal/path.{type Path}
+import yodel/internal/properties.{type Properties}
 import yodel/options.{type Format, Auto, Json, Yaml}
-import yodel/path.{type Path}
-import yodel/properties.{type Properties}
 
 const known_extensions = [
   #("json", ["json", "jsn", "json5", "jsonc"]),
   #("yaml", ["yaml", "yml"]),
 ]
 
+pub fn supported_extensions() -> List(String) {
+  known_extensions
+  |> list.flat_map(fn(exts) { exts.1 })
+}
+
 pub fn detect(input: Input) -> Format {
   case input {
-    File(path) -> {
-      detect_format_from_path(path)
-    }
-    Content(content) -> {
-      detect_format_from_content(content)
-    }
+    File(path) -> detect_format_from_path(path)
+    Content(content) -> detect_format_from_content(content)
+    Directory(_) -> Auto
   }
 }
 

@@ -1,0 +1,11 @@
+database:
+  host: dev.db.local
+  port: 5433
+  user: devuser
+  password: devpass
+
+feature_flags:
+  new_ui: true
+
+logging:
+  level: debug

@@ -1,5 +1,5 @@
 import gleam/list
-import yodel/input.{type Input}
+import yodel/internal/input.{type Input}
 import yodel/options.{type Format, type Options, Auto}
 
 pub type FormatDetector {

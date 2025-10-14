@@ -1,0 +1,13 @@
+app:
+  name: myapp
+  version: 1.0.0
+
+database:
+  host: localhost
+  port: 5432
+  user: ${DB_USER}
+  password: ${DB_PASSWORD}
+
+feature_flags:
+  new_ui: false
+  api_v2: false
