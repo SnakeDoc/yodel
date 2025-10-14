@@ -19,6 +19,7 @@ pub type FileError {
   FileNotFound(path: String)
   FilePermissionDenied(path: String)
   FileReadError(details: String)
+  NotAFile(path: String)
 }
 
 /// Errors that occur when parsing configuration content.
@@ -83,6 +84,7 @@ fn format_file_error(error: FileError) -> String {
     FileNotFound(path) -> "File not found: " <> path
     FilePermissionDenied(path) -> "Permission denied: " <> path
     FileReadError(details) -> "Error reading file: " <> details
+    NotAFile(path) -> "Not a file: " <> path
   }
 }
 

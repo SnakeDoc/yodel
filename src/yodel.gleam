@@ -43,14 +43,16 @@
 //// - Get string, integer, float, and boolean values from the configuration.
 //// - Optional return default values if the key is not found.
 
+import gleam/list
 import gleam/result
 import yodel/errors
 import yodel/internal/context
 import yodel/internal/format.{FormatDetector}
-import yodel/internal/input
+import yodel/internal/input.{Directory}
 import yodel/internal/parser
 import yodel/internal/parsers/toml
 import yodel/internal/parsers/yaml
+import yodel/internal/profiles.{type ConfigFile}
 import yodel/internal/properties.{type Properties}
 import yodel/internal/resolver
 import yodel/internal/validator
@@ -226,12 +228,10 @@ pub fn load_with_options(
   with options: Options,
   from input: String,
 ) -> Result(Context, ConfigError) {
-  use content <- read(input)
-  use format <- select(input, content, options)
-  use resolved <- resolve(content, options)
-  use parsed <- parse(resolved, format)
-  use validated <- validate(parsed)
-  Ok(context.new(validated))
+  case input.detect_input(input) {
+    Directory(dir) -> load_from_directory(dir, options)
+    _ -> load_single_file(input, options)
+  }
 }
 
 /// Get a string value from the configuration.
@@ -519,9 +519,9 @@ pub fn as_auto(options options: Options) -> Options {
 /// ```
 pub fn with_resolve_enabled(
   options options: Options,
-  enabled enabled: Bool,
+  resolve_enabled resolve_enabled: Bool,
 ) -> Options {
-  options.with_resolve_enabled(options:, enabled:)
+  options.with_resolve_enabled(options:, resolve_enabled:)
 }
 
 /// Enable placeholder resolution.
@@ -564,9 +564,9 @@ pub fn resolve_disabled(options options: Options) -> Options {
 /// ```
 pub fn with_resolve_mode(
   options options: Options,
-  mode mode: ResolveMode,
+  resolve_mode resolve_mode: ResolveMode,
 ) -> Options {
-  options.with_resolve_mode(options:, mode:)
+  options.with_resolve_mode(options:, resolve_mode:)
 }
 
 /// Set the resolve mode to strict.
@@ -595,57 +595,121 @@ pub fn with_resolve_lenient(options options: Options) -> Options {
   with_resolve_mode(options, resolve_lenient)
 }
 
+/// Set the base name for configuration files when loading from a directory.
+///
+/// The base name is used to identify configuration files matching the pattern
+/// `{base_name}[-{profile}].{ext}`. For example, with base name `"settings"`:
+///
+/// - `settings.yaml` → base config
+/// - `settings-dev.yaml` → dev profile
+/// - `settings-prod.toml` → prod profile
+///
+/// **Default:** `"config"`
+///
+/// Example:
+///
+/// ```gleam
+/// let assert Ok(ctx) =
+///   yodel.default_options()
+///   |> yodel.with_config_base_name("settings")
+///   |> yodel.load_with_options("./config-dir")
+/// // Looks for: settings.yaml, settings-dev.yaml, etc.
+/// ```
+pub fn with_config_base_name(
+  options options: Options,
+  config_base_name config_base_name: String,
+) -> Options {
+  options.with_config_base_name(options:, config_base_name:)
+}
+
+/// Set the active configuration profiles to load.
+///
+/// Profiles allow environment-specific configuration overrides.
+/// Profile configs are merged in the order specified, with later profiles
+/// overriding earlier ones.
+///
+/// **Note:** The `YODEL_PROFILES` environment variable takes precedence over
+/// programmatically set profiles.
+///
+/// Example:
+///
+/// ```gleam
+/// let assert Ok(ctx) =
+///   yodel.default_options()
+///   |> yodel.with_profiles(["dev", "local"])
+///   |> yodel.load_with_options("./config-dir")
+/// // Loads: config.yaml, config-dev.yaml, config-local.yaml
+/// // Values in config-local.yaml override config-dev.yaml
+/// // Values in config-dev.yaml override config.yaml
+/// ```
+pub fn with_profiles(
+  options options: Options,
+  profiles profiles: List(String),
+) -> Options {
+  options.with_profiles(options:, profiles:)
+}
+
 /// Format a `ConfigError` into a human-readable string.
 pub fn describe_config_error(error: ConfigError) -> String {
   errors.format_config_error(error)
 }
 
-fn parse(
-  input: String,
-  format: Format,
-  next: fn(Properties) -> Result(Context, ConfigError),
-) -> Result(Context, ConfigError) {
-  parser.parse(input, format)
-  |> result.try(next)
-}
-
-fn validate(
-  props: Properties,
-  handler: fn(Properties) -> Result(Context, ConfigError),
-) -> Result(Context, ConfigError) {
-  validator.validate_properties(props)
-  |> result.try(handler)
-}
-
-fn resolve(
+/// Loads a single configuration file or string content.
+fn load_single_file(
   input: String,
   options: Options,
-  handler: fn(String) -> Result(Context, ConfigError),
 ) -> Result(Context, ConfigError) {
-  case options.is_resolve_enabled(options) {
-    True -> resolver.resolve_placeholders(input, options)
-    False -> input |> Ok
-  }
-  |> result.try(handler)
+  load_to_properties(input, options) |> result.map(context.new)
+}
+
+/// Loads a single content source into Properties.
+fn load_to_properties(
+  input: String,
+  options: Options,
+) -> Result(Properties, ConfigError) {
+  use content <- read(input)
+  use format <- select(input, content, options)
+  use resolved <- resolve(content, options)
+  use parsed <- parse(resolved, format)
+  use validated <- validate(parsed)
+  Ok(validated)
+}
+
+/// Loads multiple configuration files from a directory.
+///
+/// Discovers and loads files in order: base config, then active profile configs.
+/// Later configs override values from earlier ones.
+fn load_from_directory(
+  directory: String,
+  options: Options,
+) -> Result(Context, ConfigError) {
+  let base_name = options.get_config_base_name(options)
+
+  use config_files <- discover(directory, base_name, options)
+  use properties_list <- load_dirs(config_files, options)
+  use merged <- merge(properties_list)
+  use validated <- result.try(validator.validate_properties(merged))
+
+  Ok(context.new(validated))
 }
 
 fn read(
   input: String,
-  handler: fn(String) -> Result(Context, ConfigError),
-) -> Result(Context, ConfigError) {
+  next: fn(String) -> Result(Properties, ConfigError),
+) -> Result(Properties, ConfigError) {
   case input.get_content(input) {
     Ok(content) -> Ok(content)
     Error(e) -> Error(e)
   }
-  |> result.try(handler)
+  |> result.try(next)
 }
 
 fn select(
   input: String,
   content: String,
   options: Options,
-  handler: fn(Format) -> Result(Context, ConfigError),
-) -> Result(Context, ConfigError) {
+  next: fn(Format) -> Result(Properties, ConfigError),
+) -> Result(Properties, ConfigError) {
   let formats = [
     FormatDetector("toml", toml.detect),
     FormatDetector("json/yaml", yaml.detect),
@@ -657,5 +721,61 @@ fn select(
     options.Auto -> format_auto
   }
   |> Ok
+  |> result.try(next)
+}
+
+fn resolve(
+  input: String,
+  options: Options,
+  next: fn(String) -> Result(Properties, ConfigError),
+) -> Result(Properties, ConfigError) {
+  case options.is_resolve_enabled(options) {
+    True -> resolver.resolve_placeholders(input, options)
+    False -> input |> Ok
+  }
+  |> result.try(next)
+}
+
+fn parse(
+  input: String,
+  format: Format,
+  next: fn(Properties) -> Result(Properties, ConfigError),
+) -> Result(Properties, ConfigError) {
+  parser.parse(input, format)
+  |> result.try(next)
+}
+
+fn validate(
+  props: Properties,
+  handler: fn(Properties) -> Result(Properties, ConfigError),
+) -> Result(Properties, ConfigError) {
+  validator.validate_properties(props)
   |> result.try(handler)
+}
+
+fn discover(
+  directory: String,
+  base_name: String,
+  options: Options,
+  next: fn(List(ConfigFile)) -> Result(Context, ConfigError),
+) -> Result(Context, ConfigError) {
+  profiles.discover_configs(directory, base_name, options)
+  |> result.try(next)
+}
+
+fn load_dirs(
+  config_files: List(ConfigFile),
+  options: Options,
+  next: fn(List(Properties)) -> Result(Context, ConfigError),
+) -> Result(Context, ConfigError) {
+  list.try_map(config_files, fn(cf) { load_to_properties(cf.path, options) })
+  |> result.try(next)
+}
+
+fn merge(
+  properties_list: List(Properties),
+  next: fn(Properties) -> Result(Context, ConfigError),
+) -> Result(Context, ConfigError) {
+  list.fold(properties_list, properties.new(), properties.merge)
+  |> next
 }
