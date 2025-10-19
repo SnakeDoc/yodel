@@ -1,47 +1,109 @@
 //// Yodel is a type-safe configuration loader for Gleam that handles JSON,
 //// YAML, and TOML configs with automatic format detection, environment variable
-//// resolution, and an intuitive dot-notation API for accessing your config
-//// values.
+//// resolution, profile-based configuration, and an intuitive dot-notation API.
+////
+//// # Quick Start
 ////
 //// ```gleam
 //// import yodel
 ////
 //// let assert Ok(ctx) = yodel.load("config.toml")
-//// yodel.get_string(ctx, "foo.bar") // "fooey"
+//// yodel.get_string(ctx, "database.host") // "localhost"
 //// ```
 ////
-//// Yodel can resolve placeholders in the configuration content, using environment variables.
-//// - Placeholders are defined as `${foo}` where `foo` is the placeholder key.
-//// - Placeholders can have default values like `${foo:bar}` where `bar` is the default value.
-//// - Placeholders can be nested like `${foo:${bar}}` where `bar` is another placeholder key.
+//// # Key Features
+////
+//// ## Multiple Format Support
+////
+//// Load JSON, YAML, or TOML configuration files with automatic format detection:
+////
+//// ```gleam
+//// yodel.load("config.yaml")  // Auto-detects YAML
+//// yodel.load("config.toml")  // Auto-detects TOML
+//// yodel.load("config.json")  // Auto-detects JSON
+//// ```
+////
+//// ## Environment Variable Resolution
+////
+//// Use placeholders to inject environment variables into your configuration:
 ////
 //// ```bash
-//// # system environment variables
-//// echo $FOO # "fooey"
-//// echo $BAR # <empty>
+//// export DATABASE_HOST="prod.db.example.com"
+//// export API_KEY="secret-key-123"
 //// ```
 ////
-//// ```toml
-//// # config.toml
-//// foo = "${FOO}"
-//// bar = "${BAR:default}"
+//// ```yaml
+//// # config.yaml
+//// database:
+////   host: ${DATABASE_HOST}
+////   password: ${DB_PASSWORD:default-password}
+//// api:
+////   key: ${API_KEY}
 //// ```
+////
+//// Placeholders support:
+//// - Simple substitution: `${VAR_NAME}`
+//// - Default values: `${VAR_NAME:default}`
+//// - Nested placeholders: `${VAR1:${VAR2:fallback}}`
+////
+//// ## Profile-Based Configuration
+////
+//// Manage environment-specific configurations with profiles that automatically
+//// merge over your base configuration:
+////
+//// ```text
+//// config/
+//// ├── config.yaml              # Base configuration (all environments)
+//// ├── config-dev.yaml          # Development overrides
+//// ├── config-staging.yaml      # Staging overrides
+//// └── config-prod.yaml         # Production overrides
+//// ```
+////
+//// Activate profiles via environment variable:
+////
+//// ```bash
+//// export YODEL_PROFILES=dev,local
+//// ```
+////
 //// ```gleam
-//// import yodel
-////
-//// let ctx = case yodel.load("config.toml") {
-////   Ok(ctx) -> ctx
-////   Error(e) -> Error(e) // check your config!
-//// }
-////
-//// yodel.get_string(ctx, "foo") // "fooey"
-//// yodel.get_string(ctx, "bar") // "default"
+//// // Loads config.yaml, then config-dev.yaml, then config-local.yaml
+//// // Later profiles override earlier ones
+//// let assert Ok(ctx) = yodel.load("./config")
 //// ```
 ////
-//// Yodel makes it easy to access configuration values in your Gleam code.
-//// - Access values from your configuration using dot-notation.
-//// - Get string, integer, float, and boolean values from the configuration.
-//// - Optional return default values if the key is not found.
+//// Or programmatically:
+////
+//// ```gleam
+//// let assert Ok(ctx) =
+////   yodel.default_options()
+////   |> yodel.with_profiles(["dev", "local"])
+////   |> yodel.load_with_options("./config")
+//// ```
+////
+//// **Note:** The `YODEL_PROFILES` environment variable takes precedence over
+//// programmatically set profiles, allowing runtime override without code changes.
+//// This makes it easy to change environments via deployment configuration.
+////
+//// ## Type-Safe Value Access
+////
+//// Access configuration values with type safety and helpful error messages:
+////
+//// ```gleam
+//// let assert Ok(ctx) = yodel.load("config.yaml")
+////
+//// // Get values with type checking
+//// let assert Ok(host) = yodel.get_string(ctx, "database.host")
+//// let assert Ok(port) = yodel.get_int(ctx, "database.port")
+//// let assert Ok(timeout) = yodel.get_float(ctx, "api.timeout")
+//// let assert Ok(enabled) = yodel.get_bool(ctx, "features.new_ui")
+////
+//// // Provide defaults for optional values
+//// let host = yodel.get_string_or(ctx, "cache.host", "localhost")
+//// let port = yodel.get_int_or(ctx, "cache.port", 6379)
+////
+//// // Parse values from strings when needed
+//// let assert Ok(port) = yodel.parse_int(ctx, "port")  // "8080" → 8080
+//// ```
 
 import gleam/list
 import gleam/result
@@ -202,7 +264,7 @@ pub const resolve_lenient = options.Lenient
 ///   Ok(ctx) -> ctx
 ///   Error(e) -> {
 ///     // Handle error appropriately
-///     panic as yodel.format_config_error(e)
+///     panic as yodel.describe_config_error(e)
 ///   }
 /// }
 /// ```
@@ -273,6 +335,7 @@ pub fn get_string_or(ctx: Context, key: String, default: String) -> String {
 ///   Ok(value) -> value // "42"
 ///   Error(e) -> Error(e)
 /// }
+/// ```
 pub fn parse_string(
   ctx: Context,
   key: String,
@@ -334,6 +397,7 @@ pub fn parse_int(ctx: Context, key: String) -> Result(Int, PropertiesError) {
 ///   Ok(value) -> value // 42.0
 ///   Error(e) -> Error(e)
 /// }
+/// ```
 pub fn get_float(ctx: Context, key: String) -> Result(Float, PropertiesError) {
   context.get_float(ctx, key)
 }
@@ -377,6 +441,7 @@ pub fn parse_float(ctx: Context, key: String) -> Result(Float, PropertiesError) 
 ///   Ok(value) -> value // True
 ///   Error(e) -> Error(e)
 /// }
+/// ```
 pub fn get_bool(ctx: Context, key: String) -> Result(Bool, PropertiesError) {
   context.get_bool(ctx, key)
 }
@@ -591,6 +656,7 @@ pub fn with_resolve_strict(options options: Options) -> Options {
 ///   yodel.default_options()
 ///   |> yodel.with_resolve_lenient()
 ///   |> yodel.load_with_options(config_content)
+/// ```
 pub fn with_resolve_lenient(options options: Options) -> Options {
   with_resolve_mode(options, resolve_lenient)
 }
