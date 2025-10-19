@@ -2,6 +2,12 @@
 
 # Changelog
 
+## v2.0.1
+
+### Documentation
+
+- Regenerated documentation using Gleam v1.13.0, which improves type display in generated HTML documentation
+
 ## v2.0.0
 
 ### New Features
