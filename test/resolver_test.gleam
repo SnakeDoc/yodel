@@ -5,7 +5,7 @@ import startest/expect
 import test_helpers.{with_env}
 import yodel
 import yodel/errors.{ResolverError, UnresolvedPlaceholder}
-import yodel/resolver
+import yodel/internal/resolver
 
 pub fn resolver_tests() {
   describe("resolver", [
@@ -70,7 +70,7 @@ pub fn resolver_tests() {
       it("fails in strict mode with missing env var", fn() {
         let options =
           yodel.default_options()
-          |> yodel.with_resolve_mode(yodel.strict_resolve)
+          |> yodel.with_resolve_mode(yodel.resolve_strict)
         "${MISSING}"
         |> resolver.resolve_placeholders(options)
         |> expect.to_be_error
@@ -81,12 +81,20 @@ pub fn resolver_tests() {
       it("preserves placeholder in lenient mode", fn() {
         let options =
           yodel.default_options()
-          |> yodel.with_resolve_mode(yodel.lenient_resolve)
+          |> yodel.with_resolve_mode(yodel.resolve_lenient)
         "${MISSING}"
         |> resolver.resolve_placeholders(options)
         |> expect.to_be_ok
         |> expect.to_equal("${MISSING}")
       }),
     ]),
+    it("resolves placeholder with URL default containing colon", fn() {
+      yodel.default_options()
+      |> yodel.load_with_options("api: ${API_ENDPOINT:https://api.example.com}")
+      |> expect.to_be_ok
+      |> yodel.get_string("api")
+      |> expect.to_be_ok
+      |> expect.to_equal("https://api.example.com")
+    }),
   ])
 }

@@ -1,9 +1,12 @@
 name = "yodel"
-version = "1.0.2"
+version = "2.0.0"
 
-description = "A type-safe configuration loader for Gleam that handles JSON, YAML, and TOML with environment variable resolution."
+description = "A type-safe configuration loader for Gleam that supports JSON, YAML, and TOML with automatic format detection, environment variable resolution, and profile-based configuration."
 licences = ["Apache-2.0"]
-repository = { type = "github", user = "fluximus-prime", repo = "yodel" }
+repository = { type = "github", user = "SnakeDoc", repo = "yodel" }
+
+[documentation]
+pages = [{ title = "Changelog", path = "changelog.html", source = "./CHANGELOG.md" }]
 
 [dependencies]
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"

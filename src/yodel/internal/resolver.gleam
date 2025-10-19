@@ -16,6 +16,11 @@ type Placeholder {
   Placeholder(content: String, env_var: String, default: Option(String))
 }
 
+/// Resolve all environment variable placeholders in the input string.
+///
+/// Behavior depends on the resolve mode:
+/// - **Strict**: Fails if any placeholder cannot be resolved
+/// - **Lenient**: Preserves unresolved placeholders as-is
 pub fn resolve_placeholders(
   input: String,
   options: Options,
@@ -28,6 +33,7 @@ pub fn resolve_placeholders(
   }
 }
 
+/// Recursively resolve placeholders, tracking attempted resolutions to prevent infinite loops.
 fn resolve_value(
   value: String,
   pattern: Regexp,

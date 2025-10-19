@@ -1,6 +1,6 @@
 import startest.{describe, it}
 import startest/expect
-import yodel/path
+import yodel/internal/path
 
 pub fn path_tests() {
   describe("path", [

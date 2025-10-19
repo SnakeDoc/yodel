@@ -13,17 +13,29 @@ import yodel/errors.{
   type ConfigError, InvalidStructure, InvalidSyntax, Location, ParseError,
   SyntaxError,
 }
-import yodel/input.{type Input, Content, File}
+import yodel/internal/input.{type Input, Content, Directory, File}
+import yodel/internal/path.{type Path}
+import yodel/internal/properties.{type Properties}
 import yodel/options.{type Format, Auto, Toml}
-import yodel/path.{type Path}
-import yodel/properties.{type Properties}
 
 const known_extensions = ["toml", "tml"]
+
+pub fn supported_extensions() -> List(String) {
+  known_extensions
+}
 
 pub fn detect(input: Input) -> Format {
   case input {
     File(path) -> detect_format_from_path(path)
     Content(content) -> detect_format_from_content(content)
+    Directory(_) -> Auto
+  }
+}
+
+pub fn parse(from content: String) -> Result(Properties, ConfigError) {
+  case tom.parse(content) {
+    Ok(doc) -> parse_properties(doc, path.new()) |> Ok
+    Error(err) -> Error(map_tom_error(err))
   }
 }
 
@@ -44,13 +56,6 @@ fn detect_format_from_content(content: String) -> Format {
   {
     True -> Toml
     False -> Auto
-  }
-}
-
-pub fn parse(from content: String) -> Result(Properties, ConfigError) {
-  case tom.parse(content) {
-    Ok(doc) -> parse_properties(doc, path.new()) |> Ok
-    Error(err) -> Error(map_tom_error(err))
   }
 }
 
