@@ -7,12 +7,20 @@ import yodel/errors.{
   NotAFile,
 }
 
+/// Represents different types of configuration input.
 pub type Input {
+  /// A file path to a configuration file
   File(path: String)
+  /// A directory path containing configuration files
   Directory(path: String)
+  /// Raw configuration content as a string
   Content(content: String)
 }
 
+/// Get the content from an input source.
+///
+/// Reads files from disk or returns content directly.
+/// Returns an error for directories (use profile loading instead).
 pub fn get_content(input: String) -> Result(String, ConfigError) {
   case input |> detect_input {
     File(path) -> read_file(path)
@@ -21,6 +29,7 @@ pub fn get_content(input: String) -> Result(String, ConfigError) {
   }
 }
 
+/// Detect the input cis a file path, directory path, or raw content.
 pub fn detect_input(input: String) -> Input {
   let input = string.trim(input)
   case simplifile.is_file(input), simplifile.is_directory(input) {
@@ -30,6 +39,9 @@ pub fn detect_input(input: String) -> Input {
   }
 }
 
+/// Extract the file extension from a path.
+///
+/// Returns the extension, or empty string if no extension found.
 pub fn get_extension_from_path(path: String) -> String {
   case
     path |> string.trim |> string.lowercase |> string.split(".") |> list.last
@@ -39,11 +51,13 @@ pub fn get_extension_from_path(path: String) -> String {
   }
 }
 
+/// Read a file from disk.
 pub fn read_file(from path: String) -> Result(String, ConfigError) {
   simplifile.read(path)
   |> result.map_error(fn(err) { map_simplifile_error(err) })
 }
 
+/// List all files in a directory.
 pub fn list_files(in directory: String) -> Result(List(String), ConfigError) {
   use files <- ls(directory)
 

@@ -2,6 +2,7 @@ import gleam/list
 import yodel/internal/input.{type Input}
 import yodel/options.{type Format, type Options, Auto}
 
+/// A format detector that can identify a configuration format from input.
 pub type FormatDetector {
   FormatDetector(name: String, detect: DetectFunction)
 }
@@ -9,10 +10,13 @@ pub type FormatDetector {
 pub type DetectFunction =
   fn(Input) -> Format
 
-/// if the user specified a format, use it
-/// otherwise, try to detect the format from the input
-/// if that fails, try to detect the format from the content
-/// and if that fails, return `Auto` because we didn't figure it out
+/// Determine the configuration format to use.
+///
+/// Resolution order:
+/// 1. User-specified format (if provided in options)
+/// 2. Format detected from input (file extension)
+/// 3. Format detected from content (parsing patterns)
+/// 4. Auto (unable to determine format)
 pub fn get_format(
   input: String,
   content: String,
@@ -29,6 +33,9 @@ pub fn get_format(
   }
 }
 
+/// Attempts to detect format using the provided detector functions.
+///
+/// Stops at the first successful detection, otherwise returns Auto.
 fn detect_format(input: Input, formats: List(FormatDetector)) -> Format {
   list.fold(formats, options.Auto, fn(acc, format) {
     case acc {

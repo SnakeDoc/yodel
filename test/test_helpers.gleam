@@ -4,12 +4,24 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import yodel.{type Format}
 
+/// Convert a Format to its string representation.
 pub fn to_string(format: Format) {
   format
   |> string.inspect
   |> string.lowercase
 }
 
+/// Temporarily set environment variables for the duration of a test.
+///
+/// Preserves existing environment variables and restores them after the test.
+/// Use this when tests need specific environment variable states.
+///
+/// Example:
+/// ```gleam
+/// let env = dict.from_list([#("YODEL_PROFILES", Some("dev"))])
+/// use <- with_env(env)
+/// // Test code that needs YODEL_PROFILES=dev
+/// ```
 pub fn with_env(envs: Dict(String, Option(String)), handler: fn() -> Nil) {
   use old_envs <- preserve_envs(envs)
   use <- set_envs(envs)
