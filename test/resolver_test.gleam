@@ -88,5 +88,13 @@ pub fn resolver_tests() {
         |> expect.to_equal("${MISSING}")
       }),
     ]),
+    it("resolves placeholder with URL default containing colon", fn() {
+      yodel.default_options()
+      |> yodel.load_with_options("api: ${API_ENDPOINT:https://api.example.com}")
+      |> expect.to_be_ok
+      |> yodel.get_string("api")
+      |> expect.to_be_ok
+      |> expect.to_equal("https://api.example.com")
+    }),
   ])
 }
