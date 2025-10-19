@@ -193,8 +193,6 @@ fn extract_filename(path: String) -> String {
 
 /// Removes the file extension from a filename.
 fn remove_extension(filename: String) -> String {
-  filename
-  |> string.split(".")
-  |> list.take(list.length(string.split(filename, ".")) - 1)
-  |> string.join(".")
+  let parts = string.split(filename, ".")
+  parts |> list.take(list.length(parts) - 1) |> string.join(".")
 }
