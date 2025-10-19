@@ -32,6 +32,13 @@ pub fn detect(input: Input) -> Format {
   }
 }
 
+pub fn parse(from content: String) -> Result(Properties, ConfigError) {
+  case tom.parse(content) {
+    Ok(doc) -> parse_properties(doc, path.new()) |> Ok
+    Error(err) -> Error(map_tom_error(err))
+  }
+}
+
 fn detect_format_from_path(path: String) -> Format {
   let ext = input.get_extension_from_path(path)
   case list.contains(known_extensions, ext) {
@@ -49,13 +56,6 @@ fn detect_format_from_content(content: String) -> Format {
   {
     True -> Toml
     False -> Auto
-  }
-}
-
-pub fn parse(from content: String) -> Result(Properties, ConfigError) {
-  case tom.parse(content) {
-    Ok(doc) -> parse_properties(doc, path.new()) |> Ok
-    Error(err) -> Error(map_tom_error(err))
   }
 }
 

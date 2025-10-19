@@ -32,6 +32,20 @@ pub fn detect(input: Input) -> Format {
   }
 }
 
+pub fn parse(from string: String) -> Result(Properties, ConfigError) {
+  case glaml.parse_string(string) {
+    Ok(docs) ->
+      docs
+      |> list.map(glaml.document_root)
+      |> list.fold(properties.new(), fn(acc, node) {
+        parse_properties(node, path.new())
+        |> properties.merge(acc)
+      })
+      |> Ok
+    Error(err) -> Error(map_glaml_error(err))
+  }
+}
+
 fn detect_format_from_path(path: String) -> Format {
   let ext = input.get_extension_from_path(path)
   case
@@ -75,20 +89,6 @@ fn detect_yaml(content: String) -> Bool {
     || string.contains(content, "- ")
   }
   && { !string.starts_with(content, "{") && !string.starts_with(content, "[") }
-}
-
-pub fn parse(from string: String) -> Result(Properties, ConfigError) {
-  case glaml.parse_string(string) {
-    Ok(docs) ->
-      docs
-      |> list.map(glaml.document_root)
-      |> list.fold(properties.new(), fn(acc, node) {
-        parse_properties(node, path.new())
-        |> properties.merge(acc)
-      })
-      |> Ok
-    Error(err) -> Error(map_glaml_error(err))
-  }
 }
 
 fn parse_properties(node: Node, path: Path) -> Properties {
