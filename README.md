@@ -186,10 +186,11 @@ import yodel
 pub fn main() {
   let assert Ok(config) =
     yodel.default_options()
-    |> yodel.as_toml()                    // Force TOML format
-    |> yodel.with_resolve_strict()        // Fail on unresolved placeholders
-    |> yodel.with_profiles(["prod"])      // Set active profiles
-    |> yodel.with_config_base_name("app") // Use app.toml instead of config.toml
+    |> yodel.as_toml()                           // Force TOML format
+    |> yodel.with_resolve_strict()               // Fail on unresolved placeholders
+    |> yodel.with_profiles(["prod"])             // Set active profiles
+    |> yodel.with_config_base_name("app")        // Use app.toml instead of config.toml
+    |> yodel.with_profile_env_var("MY_PROFILES") // Read from MY_PROFILES env var
     |> yodel.load_with_options("./config")
 }
 ```

@@ -482,6 +482,8 @@ pub fn parse_bool(ctx: Context, key: String) -> Result(Bool, PropertiesError) {
 /// - Format: `format_auto`
 /// - Resolve Enabled: `True`
 /// - Resolve Mode: `resolve_lenient`
+/// - Config Base Name: `"config"`
+/// - Profile Environment Variable: `"YODEL_PROFILES"`
 ///
 /// Example:
 ///
@@ -713,6 +715,29 @@ pub fn with_profiles(
   profiles profiles: List(String),
 ) -> Options {
   options.with_profiles(options:, profiles:)
+}
+
+/// Set the environment variable name used to read active profiles.
+///
+/// By default, Yodel reads the `YODEL_PROFILES` environment variable.
+/// Use this to customize the environment variable name.
+///
+/// **Default:** `"YODEL_PROFILES"`
+///
+/// Example:
+///
+/// ```gleam
+/// let assert Ok(ctx) =
+///   yodel.default_options()
+///   |> yodel.with_profile_env_var("APP_PROFILES")
+///   |> yodel.load_with_options("./config")
+/// // Now reads from APP_PROFILES instead of YODEL_PROFILES
+/// ```
+pub fn with_profile_env_var(
+  options options: Options,
+  profile_env_var profile_env_var: String,
+) -> Options {
+  options.with_profile_env_var(options:, profile_env_var:)
 }
 
 /// Format a `ConfigError` into a human-readable string.
