@@ -29,7 +29,7 @@ pub fn get_content(input: String) -> Result(String, ConfigError) {
   }
 }
 
-/// Detect the input cis a file path, directory path, or raw content.
+/// Detect the input is a file path, directory path, or raw content.
 pub fn detect_input(input: String) -> Input {
   let input = string.trim(input)
   case simplifile.is_file(input), simplifile.is_directory(input) {
