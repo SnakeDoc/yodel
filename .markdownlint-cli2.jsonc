@@ -6,5 +6,5 @@
     }
   },
   "globs": ["**/*.md"],
-  "ignores": ["node_modules", "build"]
+  "ignores": ["node_modules", "build", "LICENSE"]
 }
