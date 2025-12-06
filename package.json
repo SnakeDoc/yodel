@@ -13,6 +13,6 @@
   },
   "devDependencies": {
     "markdownlint-cli2": "0.19.1",
-    "prettier": "3.7.1"
+    "prettier": "3.7.2"
   }
 }
