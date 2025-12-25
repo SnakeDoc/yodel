@@ -3,5 +3,5 @@
 # - https://github.com/erlef/setup-beam?tab=readme-ov-file#version-file
 
 erlang 28.3
-gleam 1.13.0
+gleam 1.14.0
 rebar 3.25.1
