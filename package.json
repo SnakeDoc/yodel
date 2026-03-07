@@ -12,7 +12,7 @@
     "lint:check:md": "markdownlint-cli2"
   },
   "devDependencies": {
-    "markdownlint-cli2": "0.20.0",
+    "markdownlint-cli2": "0.21.0",
     "prettier": "3.8.1"
   }
 }
