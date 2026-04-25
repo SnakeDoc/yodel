@@ -14,17 +14,17 @@ concurrency:
 jobs:
   prettier-format-check:
     name: Format Check
-    uses: SnakeDoc/yodel/.github/workflows/prettier-format-check.yaml@d0245a2b121ca2fed89510dfc789a3f7a529cefe # main
+    uses: SnakeDoc/yodel/.github/workflows/prettier-format-check.yaml@140b3da5428aa04d9de27f6c2dc5e1ae2f26c548 # main
 
   markdown-lint-check:
     name: Lint Check
-    uses: SnakeDoc/yodel/.github/workflows/markdown-lint-check.yaml@d0245a2b121ca2fed89510dfc789a3f7a529cefe # main
+    uses: SnakeDoc/yodel/.github/workflows/markdown-lint-check.yaml@140b3da5428aa04d9de27f6c2dc5e1ae2f26c548 # main
 
   gleam-format-check:
     name: Format Check
-    uses: SnakeDoc/yodel/.github/workflows/gleam-format-check.yaml@d0245a2b121ca2fed89510dfc789a3f7a529cefe # main
+    uses: SnakeDoc/yodel/.github/workflows/gleam-format-check.yaml@140b3da5428aa04d9de27f6c2dc5e1ae2f26c548 # main
 
   gleam-tests:
     name: Tests
     needs: [prettier-format-check, markdown-lint-check, gleam-format-check]
-    uses: SnakeDoc/yodel/.github/workflows/gleam-tests.yaml@d0245a2b121ca2fed89510dfc789a3f7a529cefe # main
+    uses: SnakeDoc/yodel/.github/workflows/gleam-tests.yaml@140b3da5428aa04d9de27f6c2dc5e1ae2f26c548 # main
