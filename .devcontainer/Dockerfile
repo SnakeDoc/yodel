@@ -1,1 +1,1 @@
-FROM ghcr.io/bymbly/workshop:latest@sha256:ceb27f7f2baf146333b888079f40deae7721ba19f71fe28b55d7cd568ffd2fb2
+FROM ghcr.io/bymbly/workshop:latest@sha256:ccb272fc4f07f7bbfee2f51513e9526a3ac42c8fde022742f776216cc70770c3
