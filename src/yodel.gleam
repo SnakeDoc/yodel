@@ -307,7 +307,10 @@ pub fn load_with_options(
 ///   Error(e) -> Error(e)
 /// }
 /// ```
-pub fn get_string(ctx: Context, key: String) -> Result(String, PropertiesError) {
+pub fn get_string(
+  ctx: Context,
+  key: String,
+) -> Result(String, PropertiesError) {
   context.get_string(ctx, key)
 }
 
@@ -427,7 +430,10 @@ pub fn get_float_or(ctx: Context, key: String, default: Float) -> Float {
 ///   Error(e) -> Error(e)
 /// }
 /// ```
-pub fn parse_float(ctx: Context, key: String) -> Result(Float, PropertiesError) {
+pub fn parse_float(
+  ctx: Context,
+  key: String,
+) -> Result(Float, PropertiesError) {
   context.parse_float(ctx, key)
 }
 

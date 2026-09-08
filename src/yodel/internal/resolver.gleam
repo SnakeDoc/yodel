@@ -68,7 +68,10 @@ fn resolve_value(
   }
 }
 
-fn find_next_placeholder(value: String, pattern: Regexp) -> Option(Placeholder) {
+fn find_next_placeholder(
+  value: String,
+  pattern: Regexp,
+) -> Option(Placeholder) {
   case regexp.scan(pattern, value) {
     [] -> None
     [match, ..] -> {
