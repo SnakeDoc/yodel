@@ -136,7 +136,10 @@ fn check_groups_for_duplicates(
 ///
 /// Returns `ConfigFile` with extracted profile name, or `Error(Nil)` if the
 /// file doesn't match the config pattern.
-fn parse_config_file(path: String, base_name: String) -> Result(ConfigFile, Nil) {
+fn parse_config_file(
+  path: String,
+  base_name: String,
+) -> Result(ConfigFile, Nil) {
   let filename = extract_filename(path)
 
   case matches_base_pattern(filename, base_name) {

@@ -17,7 +17,10 @@ pub fn new(from properties: Properties) -> Context {
   Context(properties:)
 }
 
-pub fn get_string(ctx: Context, path: String) -> Result(String, PropertiesError) {
+pub fn get_string(
+  ctx: Context,
+  path: String,
+) -> Result(String, PropertiesError) {
   case properties.get(ctx.properties, path) {
     Ok(StringValue(value)) -> Ok(value)
     Ok(value) -> Error(TypeError(path:, error: ExpectedString(got: value)))
@@ -88,7 +91,10 @@ pub fn get_float(ctx: Context, path: String) -> Result(Float, PropertiesError) {
   }
 }
 
-pub fn parse_float(ctx: Context, path: String) -> Result(Float, PropertiesError) {
+pub fn parse_float(
+  ctx: Context,
+  path: String,
+) -> Result(Float, PropertiesError) {
   case get_float(ctx, path) {
     Ok(value) -> Ok(value)
     Error(TypeError(..)) -> {
